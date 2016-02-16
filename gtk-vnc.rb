@@ -16,20 +16,38 @@ class GtkVnc < Formula
   depends_on "gettext"
   depends_on "glib"
   depends_on "gnutls"
-  depends_on "gtk+3"
+  depends_on "gtk+"
   depends_on "libgcrypt"
   depends_on "libgpg-error"
   depends_on "pango"
+  depends_on "python"
+  depends_on "pygobject"
+  depends_on "pygtk"
   # TODO: sound
   # depends_on "pulseaudio"
+
+  patch :DATA
 
   def install
     system "./configure", "--disable-dependency-tracking",
                           "--disable-silent-rules",
-                          "--with-gtk=3.0",
                           "--enable-introspection",
                           "--with-coroutine=gthread",
+                          "--with-python",
                           "--prefix=#{prefix}"
     system "make", "install"
   end
 end
+__END__
+diff --git a/src/vnc.override b/src/vnc.override
+index 689491a..c121863 100644
+--- a/src/vnc.override
++++ b/src/vnc.override
+@@ -1,6 +1,7 @@
+ %%
+ headers
+ #include <Python.h>
++#define NO_IMPORT_PYGOBJECT
+ #include "pygobject.h"
+ #include "vncdisplay.h"
+ #include "vncdisplayenums.h"
